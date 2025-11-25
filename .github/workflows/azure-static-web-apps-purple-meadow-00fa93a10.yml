@@ -16,7 +16,7 @@ jobs:
     name: Build and Deploy Job
     permissions:
       id-token: write
-      contents: read
+      contents: write      # <-- FIX #1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,7 +43,7 @@ jobs:
           action: "upload"
 
           skip_app_build: true
-          skip_api_build: true
+          skip_api_build: false     # <-- FIX #2
 
           app_location: "/"
           api_location: "api"
