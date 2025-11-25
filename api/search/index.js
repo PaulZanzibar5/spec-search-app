@@ -1,3 +1,6 @@
+// Azure Static Web Apps Functions require explicit import for fetch
+import fetch from "node-fetch";
+
 export default async function (context, req) {
     const query = req.query.query;
 
@@ -10,12 +13,15 @@ export default async function (context, req) {
     }
 
     const endpoint = "https://steel-spec.search.windows.net";
-   const indexName = "rag-1764025234671";
+    const indexName = "rag-1764025234671";
 
     const apiKey = process.env.AZURE_SEARCH_KEY;
 
     const url =
-        `${endpoint}/indexes/${indexName}/docs?api-version=2024-07-01-Preview&search=${encodeURIComponent(query)}&queryType=simple`;
+        `${endpoint}/indexes/${indexName}/docs` +
+        `?api-version=2024-07-01-Preview` +
+        `&search=${encodeURIComponent(query)}` +
+        `&queryType=simple`;
 
     try {
         const response = await fetch(url, {
@@ -26,10 +32,22 @@ export default async function (context, req) {
             }
         });
 
+        if (!response.ok) {
+            const text = await response.text();
+            context.res = {
+                status: response.status,
+                body: `Azure Search Error: ${text}`
+            };
+            return;
+        }
+
         const data = await response.json();
         context.res = { status: 200, body: data };
 
     } catch (err) {
-        context.res = { status: 500, body: "Search failed: " + err.toString() };
+        context.res = {
+            status: 500,
+            body: "Search failed: " + err.toString()
+        };
     }
 }
