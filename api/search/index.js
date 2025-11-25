@@ -12,7 +12,8 @@ export default async function (context, req) {
     }
 
     const endpoint = "https://steel-spec.search.windows.net";
-    const indexName = "doc-index";
+   const indexName = "rag-1764025234671";
+
     const apiKey = process.env.AZURE_SEARCH_KEY;
 
     const url =
