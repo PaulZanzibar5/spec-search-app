@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export default async function (context, req) {
     const query = req.query.query;
 
