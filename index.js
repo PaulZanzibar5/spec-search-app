@@ -1,38 +1,24 @@
 async function runSearch() {
-    console.log("runSearch fired"); // debug
+    console.log("runSearch fired");
 
     const query = document.getElementById("searchBox").value.trim();
+    const resultsDiv = document.getElementById("results");
+
     if (!query) {
-        document.getElementById("results").innerHTML = "Enter a search term.";
+        resultsDiv.innerHTML = "Enter a search term.";
         return;
     }
 
-    const endpoint = "https://steel-spec.search.windows.net";      // <-- YOUR SEARCH SERVICE
-    const indexName = "doc-index";                                 // <-- YOUR INDEX NAME
-    const apiKey = "YOUR-ADMIN-OR-QUERY-KEY-HERE";                // <-- YOUR KEY
-
-    const url =
-        `${endpoint}/indexes/${indexName}/docs` +
-        `?api-version=2024-07-01-Preview` +
-        `&search=${encodeURIComponent(query)}` +
-        `&queryType=simple`;  // SLOW issues fixed by switching to simple
-
-    const resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = "Searching...";
 
     try {
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "api-key": apiKey,
-            }
-        });
+        // 🔥 CALL YOUR SECURE AZURE FUNCTION (NOT Azure Search directly)
+        const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
 
         if (!response.ok) {
-            const text = await response.text();
-            console.error("Search error:", text);
-            resultsDiv.innerHTML = `Error: ${response.status}<br>${text}`;
+            const err = await response.text();
+            console.error("API error:", err);
+            resultsDiv.innerHTML = `Error ${response.status}: ${err}`;
             return;
         }
 
@@ -60,3 +46,11 @@ async function runSearch() {
         resultsDiv.innerHTML = "Search failed. Check console.";
     }
 }
+
+// 🔥 Enable hitting ENTER to search
+document.getElementById("searchBox").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        runSearch();
+    }
+});
