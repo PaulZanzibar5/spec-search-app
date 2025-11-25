@@ -10,10 +10,19 @@
 
 <input id="searchBox" type="text" placeholder="Search..." />
 <button onclick="runSearch()">Search</button>
+<script>
+document.getElementById("searchBox").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        runSearch();
+    }
+});
+</script>
 
 <div id="results"></div>
 
 <script src="index.js"></script>
 </body>
 </html>
+
 
