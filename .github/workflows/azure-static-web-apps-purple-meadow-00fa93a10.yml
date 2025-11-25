@@ -47,7 +47,7 @@ jobs:
           ##### END FIX #####
 
           app_location: "/"       # where index.html lives
-          api_location: ""        # no API
+          api_location: "api"        # no API
           output_location: "/"    # upload the root exactly as-is
 
           github_id_token: ${{ steps.idtoken.outputs.result }}
@@ -62,3 +62,4 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
