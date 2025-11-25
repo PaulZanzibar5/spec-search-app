@@ -9,9 +9,17 @@ export default async function (context, req) {
         return;
     }
 
-    const endpoint = "https://steel-spec.search.windows.net";
+    const endpoint = "https://steel-spec2.search.windows.net";  // ← updated
     const indexName = "rag-1764025234671";
     const apiKey = process.env.AZURE_SEARCH_KEY;
+
+    if (!apiKey) {
+        context.res = {
+            status: 500,
+            body: "AZURE_SEARCH_KEY is not set in environment variables."
+        };
+        return;
+    }
 
     const url =
         `${endpoint}/indexes/${indexName}/docs` +
@@ -27,18 +35,19 @@ export default async function (context, req) {
             }
         });
 
-        if (!response.ok) {
-            const text = await response.text();
-            context.res = {
-                status: response.status,
-                body: text
-            };
-            return;
+        const text = await response.text();
+        let body;
+
+        try {
+            body = JSON.parse(text);
+        } catch {
+            body = text;
         }
 
-        const data = await response.json();
-        context.res = { status: 200, body: data };
-
+        context.res = {
+            status: response.status,
+            body
+        };
     } catch (err) {
         context.res = {
             status: 500,
